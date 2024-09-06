@@ -111,13 +111,11 @@ export function ChannelChat() {
         </div>
         <ScrollArea className="flex-1 p-4">
           {messages.map((message) => (
-            <div key={message.id} className="mb-4">
+            <div key={message.id} className="mb-4 flex items-start gap-2">
               <img
                 src={message.author.avatar}
                 alt="Avatar de usuario"
-                height={40}
-                width={40}
-                className="rounded-full"
+                className="rounded-full min-w-10 max-w-10 max-h-10 w-full min-h-10 h-full"
               />
               <span className="font-semibold text-gray-800">
                 {message.author.username}:{" "}
