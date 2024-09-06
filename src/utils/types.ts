@@ -16,6 +16,7 @@ export interface IMessage {
   content: string;
   author_id: number;
   author: {
+    avatar: string;
     username: string;
   };
   created_at: string;
