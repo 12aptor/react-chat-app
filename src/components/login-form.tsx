@@ -12,12 +12,24 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { LockIcon, MailIcon } from "lucide-react";
+import { ILogin } from "@/utils/types";
 
 export function LoginForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [credentials, setCredentials] = useState<ILogin>({
+    email: "",
+    password: "",
+  });
   const [rememberMe, setRememberMe] = useState(false);
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.currentTarget;
+
+    setCredentials({
+      ...credentials,
+      [name]: value,
+    });
+  };
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Aquí iría la lógica de inicio de sesión
@@ -41,10 +53,11 @@ export function LoginForm() {
                 <Input
                   id="email"
                   type="email"
+                  name="email"
                   placeholder="tu@ejemplo.com"
                   className="pl-10"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={credentials.email}
+                  onChange={handleInputChange}
                   required
                 />
               </div>
@@ -56,9 +69,10 @@ export function LoginForm() {
                 <Input
                   id="password"
                   type="password"
+                  name="password"
                   className="pl-10"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={credentials.password}
+                  onChange={handleInputChange}
                   required
                 />
               </div>
