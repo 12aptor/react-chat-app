@@ -13,6 +13,9 @@ import {
 } from "@/components/ui/card";
 import { LockIcon, MailIcon } from "lucide-react";
 import { ILogin } from "@/utils/types";
+import { loginService } from "@/services/auth-services";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 export function LoginForm() {
   const [credentials, setCredentials] = useState<ILogin>({
@@ -20,6 +23,7 @@ export function LoginForm() {
     password: "",
   });
   const [rememberMe, setRememberMe] = useState(false);
+  const navigate = useNavigate()
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.currentTarget;
@@ -29,10 +33,26 @@ export function LoginForm() {
       [name]: value,
     });
   };
-  
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Aquí iría la lógica de inicio de sesión
+
+    try {
+      const response = await loginService(credentials);
+      console.log(response.status)
+      if (response.status === 200) {
+        toast.success(response.json.message);
+        localStorage.setItem("jwt", response.json.data.access)
+        navigate("/chat")
+        return;
+      }
+
+      throw new Error(response.json.message);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
   };
 
   return (

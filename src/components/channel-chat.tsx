@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Hash, Send } from "lucide-react";
+import { getChannelsService } from "@/services/channel-services";
+import { IChannel } from "@/utils/types";
+import { getMessagesService } from "@/services/message-services";
 
 export function ChannelChat() {
   const [messages, setMessages] = useState([
@@ -11,7 +14,30 @@ export function ChannelChat() {
     { id: 3, author: "Usuario3", content: "¿Cómo están?" },
   ]);
   const [inputMessage, setInputMessage] = useState("");
-  const [currentChannel, setCurrentChannel] = useState("general");
+  const [currentChannel, setCurrentChannel] = useState<IChannel | null>(null);
+  const [channels, setChannels] = useState<IChannel[]>([]);
+
+  useEffect(() => {
+    getChannelsService().then((response) => {
+      if (response) {
+        setChannels(response.data);
+      }
+    });
+  }, []);
+
+  const toggleChannel = (channel: IChannel) => {
+    if (currentChannel && currentChannel.name === channel.name) {
+      return;
+    }
+
+    setCurrentChannel(channel);
+
+    getMessagesService(channel.id).then((response) => {
+      if (response) {
+        setMessages(response.data);
+      }
+    });
+  };
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,16 +55,16 @@ export function ChannelChat() {
       <div className="w-60 border-r p-4">
         <h2 className="text-lg font-semibold mb-4">Canales</h2>
         <ul className="space-y-2">
-          {["general", "random", "ayuda", "anuncios"].map((channel) => (
+          {channels.map((channel) => (
             <li
-              key={channel}
+              key={channel.id}
               className={`flex items-center space-x-2 cursor-pointer hover:bg-gray-100 p-2 rounded ${
-                currentChannel === channel ? "bg-gray-100" : ""
+                currentChannel?.name === channel.name ? "bg-gray-100" : ""
               }`}
-              onClick={() => setCurrentChannel(channel)}
+              onClick={() => toggleChannel(channel)}
             >
               <Hash className="h-5 w-5 text-gray-500" />
-              <span className="text-gray-700">{channel}</span>
+              <span className="text-gray-700">{channel.name}</span>
             </li>
           ))}
         </ul>
@@ -46,7 +72,9 @@ export function ChannelChat() {
 
       <div className="flex-1 flex flex-col">
         <div className="border-b p-4">
-          <h1 className="text-xl font-bold text-gray-700">#{currentChannel}</h1>
+          <h1 className="text-xl font-bold text-gray-700">
+            {currentChannel ? `#${currentChannel.name}` : "Selecciona un canal"}
+          </h1>
         </div>
         <ScrollArea className="flex-1 p-4">
           {messages.map((message) => (

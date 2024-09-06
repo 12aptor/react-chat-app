@@ -10,8 +10,8 @@ export const loginService = async (credentials: ILogin) => {
     body: JSON.stringify(credentials),
   });
 
+  const status = response.status;
   const json = await response.json();
-  const status = json.status;
 
   return {
     json,
