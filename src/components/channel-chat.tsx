@@ -4,15 +4,13 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Hash, Send } from "lucide-react";
 import { getChannelsService } from "@/services/channel-services";
-import { IChannel } from "@/utils/types";
+import { IChannel, IMessage, INewMessage } from "@/utils/types";
 import { getMessagesService } from "@/services/message-services";
+import { socket } from "@/lib/socket-io";
+import toast from "react-hot-toast";
 
 export function ChannelChat() {
-  const [messages, setMessages] = useState([
-    { id: 1, author: "Usuario1", content: "Hola a todos!" },
-    { id: 2, author: "Usuario2", content: "¡Bienvenidos al canal!" },
-    { id: 3, author: "Usuario3", content: "¿Cómo están?" },
-  ]);
+  const [messages, setMessages] = useState<IMessage[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [currentChannel, setCurrentChannel] = useState<IChannel | null>(null);
   const [channels, setChannels] = useState<IChannel[]>([]);
@@ -24,6 +22,22 @@ export function ChannelChat() {
       }
     });
   }, []);
+
+  useEffect(() => {
+    if (!currentChannel) {
+      return;
+    }
+
+    socket.emit("join", currentChannel.id);
+
+    socket.on("message", (mgs: IMessage) => {
+      setMessages((prev) => [...prev, mgs]);
+    });
+
+    return () => {
+      socket.off("message");
+    };
+  }, [currentChannel]);
 
   const toggleChannel = (channel: IChannel) => {
     if (currentChannel && currentChannel.name === channel.name) {
@@ -41,11 +55,30 @@ export function ChannelChat() {
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!currentChannel) {
+      toast.error("Debes seleccionar un canal");
+      return;
+    }
+
+    const jwt = localStorage.getItem("jwt");
+
+    if (!jwt) {
+      toast.error("Debes iniciar sesión para enviar un mensaje");
+      return;
+    }
+
+    const payload = jwt.split(".")[1];
+    const decoded = JSON.parse(atob(payload));
+
     if (inputMessage.trim() !== "") {
-      setMessages([
-        ...messages,
-        { id: messages.length + 1, author: "Tú", content: inputMessage },
-      ]);
+      const message: INewMessage = {
+        content: inputMessage,
+        author_id: decoded.id,
+        channel_id: currentChannel.id,
+      };
+
+      socket.emit("message", message);
+
       setInputMessage("");
     }
   };
@@ -80,7 +113,7 @@ export function ChannelChat() {
           {messages.map((message) => (
             <div key={message.id} className="mb-4">
               <span className="font-semibold text-gray-800">
-                {message.author}:{" "}
+                {message.author.username}:{" "}
               </span>
               <span className="text-gray-700">{message.content}</span>
             </div>

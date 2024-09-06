@@ -10,3 +10,20 @@ export interface IChannel {
   created_at: string;
   updated_at: string;
 }
+
+export interface IMessage {
+  id: number;
+  content: string;
+  author_id: number;
+  author: {
+    username: string;
+  };
+  created_at: string;
+  updated_at: string;
+}
+
+export interface INewMessage {
+  content: string;
+  author_id: number;
+  channel_id: string;
+}
