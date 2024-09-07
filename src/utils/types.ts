@@ -3,6 +3,13 @@ export interface ILogin {
   password: string;
 }
 
+export interface IRegisterUser {
+  username: string;
+  email: string;
+  password: string;
+  avatar: File | null | string;
+}
+
 export interface IChannel {
   id: string;
   name: string;

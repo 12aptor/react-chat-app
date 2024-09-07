@@ -8,6 +8,8 @@ import { IChannel, IMessage, INewMessage } from "@/utils/types";
 import { getMessagesService } from "@/services/message-services";
 import { socket } from "@/lib/socket-io";
 import toast from "react-hot-toast";
+import { isAuthenticated } from "@/lib/utils";
+import { Navigate } from "react-router-dom";
 
 export function ChannelChat() {
   const [messages, setMessages] = useState<IMessage[]>([]);
@@ -38,7 +40,6 @@ export function ChannelChat() {
       socket.off("message");
     };
   }, [currentChannel]);
-
   const toggleChannel = (channel: IChannel) => {
     if (currentChannel && currentChannel.name === channel.name) {
       return;
@@ -82,6 +83,10 @@ export function ChannelChat() {
       setInputMessage("");
     }
   };
+
+  if (!isAuthenticated()) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <div className="flex h-screen text-gray-800 bg-white">

@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ChannelChat } from "./components/channel-chat";
 import { LoginForm } from "./components/login-form";
 import { Toaster } from "react-hot-toast";
+import { RegisterForm } from "./components/register-form";
 
 const router = createBrowserRouter([
   {
@@ -15,6 +16,10 @@ const router = createBrowserRouter([
     path: "chat",
     element: <ChannelChat />,
   },
+  {
+    path: "register",
+    element: <RegisterForm />,
+  }
 ]);
 
 createRoot(document.getElementById("root")!).render(
