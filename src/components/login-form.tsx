@@ -39,7 +39,6 @@ export function LoginForm() {
 
     try {
       const response = await loginService(credentials);
-      console.log(response.status)
       if (response.status === 200) {
         toast.success(response.json.message);
         localStorage.setItem("jwt", response.json.data.access)

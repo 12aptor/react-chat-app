@@ -40,6 +40,7 @@ export function ChannelChat() {
       socket.off("message");
     };
   }, [currentChannel]);
+  
   const toggleChannel = (channel: IChannel) => {
     if (currentChannel && currentChannel.name === channel.name) {
       return;
