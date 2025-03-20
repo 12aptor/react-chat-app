@@ -2,7 +2,7 @@ import { API_URL } from "@/utils/constants";
 
 export const getMessagesService = async (channelId: string) => {
   try {
-    const response = await fetch(`${API_URL}/channel/messages/${channelId}`, {
+    const response = await fetch(`${API_URL}/messages/list/${channelId}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("jwt")}`,
       },

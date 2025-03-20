@@ -33,5 +33,6 @@ export interface IMessage {
 export interface INewMessage {
   content: string;
   author_id: number;
-  channel_id: string;
+  channel_id?: string;
+  channel?: string;
 }

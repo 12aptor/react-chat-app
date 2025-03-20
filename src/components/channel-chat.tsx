@@ -30,7 +30,7 @@ export function ChannelChat() {
       return;
     }
 
-    socket.emit("join", currentChannel.id);
+    socket.emit("join", `${currentChannel.name}-${currentChannel.id}`);
 
     socket.on("message", (mgs: IMessage) => {
       setMessages((prev) => [...prev, mgs]);
@@ -40,7 +40,7 @@ export function ChannelChat() {
       socket.off("message");
     };
   }, [currentChannel]);
-  
+
   const toggleChannel = (channel: IChannel) => {
     if (currentChannel && currentChannel.name === channel.name) {
       return;
@@ -76,7 +76,7 @@ export function ChannelChat() {
       const message: INewMessage = {
         content: inputMessage,
         author_id: decoded.id,
-        channel_id: currentChannel.id,
+        channel: `${currentChannel.name}-${currentChannel.id}`,
       };
 
       socket.emit("message", message);
