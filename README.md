@@ -3,6 +3,6 @@
 ## Environment variables
 
 ```bash
-VITE_API_URL=''
-VITE_SOCKET_URL=''
+VITE_API_URL='https://express-chat-app-bedn.onrender.com/api'
+VITE_SOCKET_URL='https://express-chat-app-bedn.onrender.com'
 ```
