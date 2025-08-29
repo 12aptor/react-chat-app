@@ -30,7 +30,7 @@ export function ChannelChat() {
       return;
     }
 
-    socket.emit("join", `${currentChannel.name}-${currentChannel.id}`);
+    socket.emit("join", currentChannel._id);
 
     socket.on("message", (mgs: IMessage) => {
       setMessages((prev) => [...prev, mgs]);
@@ -48,7 +48,7 @@ export function ChannelChat() {
 
     setCurrentChannel(channel);
 
-    getMessagesService(channel.id).then((response) => {
+    getMessagesService(channel._id).then((response) => {
       if (response) {
         setMessages(response.data);
       }
@@ -76,7 +76,7 @@ export function ChannelChat() {
       const message: INewMessage = {
         content: inputMessage,
         author_id: decoded.id,
-        channel: `${currentChannel.name}-${currentChannel.id}`,
+        channel_id: currentChannel._id,
       };
 
       socket.emit("message", message);
@@ -96,7 +96,7 @@ export function ChannelChat() {
         <ul className="space-y-2">
           {channels.map((channel) => (
             <li
-              key={channel.id}
+              key={channel._id}
               className={`flex items-center space-x-2 cursor-pointer hover:bg-gray-100 p-2 rounded ${
                 currentChannel?.name === channel.name ? "bg-gray-100" : ""
               }`}
@@ -117,7 +117,7 @@ export function ChannelChat() {
         </div>
         <ScrollArea className="flex-1 p-4">
           {messages.map((message) => (
-            <div key={message.id} className="mb-4 flex items-start gap-2">
+            <div key={message._id} className="mb-4 flex items-start gap-2">
               <img
                 src={message.author.avatar}
                 alt="Avatar de usuario"

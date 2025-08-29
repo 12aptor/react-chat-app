@@ -39,14 +39,15 @@ export function LoginForm() {
 
     try {
       const response = await loginService(credentials);
+
       if (response.status === 200) {
-        toast.success(response.json.message);
+        toast.success("Inicio de sesión exitoso");
         localStorage.setItem("jwt", response.json.data.access)
         navigate("/chat")
         return;
       }
 
-      throw new Error(response.json.message);
+      throw new Error(response.json.error);
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);

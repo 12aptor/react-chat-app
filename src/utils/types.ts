@@ -11,7 +11,7 @@ export interface IRegisterUser {
 }
 
 export interface IChannel {
-  id: string;
+  readonly _id: string;
   name: string;
   type: "TEXT" | "VOICE";
   created_at: string;
@@ -19,7 +19,7 @@ export interface IChannel {
 }
 
 export interface IMessage {
-  id: number;
+  readonly _id: string;
   content: string;
   author_id: number;
   author: {
@@ -34,5 +34,4 @@ export interface INewMessage {
   content: string;
   author_id: number;
   channel_id?: string;
-  channel?: string;
 }
